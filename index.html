@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>Petak Perkebunan Sawit Rakyat di Kabupaten Pelalawan, Provinsi Riau </title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/KawasanHutandiKabupatenPelalawan_1.js"></script>
+        <script src="data/BatasAdministrasiKabupatenKota_2.js"></script>
+        <script src="data/BatasAdministrasiDesa_3.js"></script>
+        <script src="data/KawasanHidrologisGambutdiKabupatenPelalawan_4.js"></script>
+        <script src="data/PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[-0.42036745138075005,101.37506302255689],[0.7644655039922227,103.4436541860671]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var title = new L.Control({'position':'topright'});
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>Petak Perkebunan Sawit Rakyat di Kabupaten Pelalawan, Provinsi Riau </h2>';
+        };
+        title.addTo(map);
+        var abstract = new L.Control({'position':'bottomleft'});
+        abstract.onAdd = function (map) {
+            this._div = L.DomUtil.create('div',
+            'leaflet-control abstract');
+            this._div.id = 'abstract'
+                this._div.setAttribute("onmouseenter", "abstract.show()");
+                this._div.setAttribute("onmouseleave", "abstract.hide()");
+                this.hide();
+                return this._div;
+            };
+            abstract.hide = function () {
+                this._div.classList.remove("abstractUncollapsed");
+                this._div.classList.add("abstract");
+                this._div.innerHTML = 'i'
+            }
+            abstract.show = function () {
+                this._div.classList.remove("abstract");
+                this._div.classList.add("abstractUncollapsed");
+                this._div.innerHTML = 'Peta interaktif ini merupakan Prototype WebGIS yang menampilkan informasi karakteristik perkebunan sawit rakyat di Kabupaten Pelalawan, Provinsi Riau sebagai salah satu indikator capaian Penelitian Terapan Peguruan Tinggi dengan judul peneitian "Strategi Penguatan Tata Kelola Melalui Digitasi Data dan Peta Spasial Kebun Sawit Rakyat" ';
+        };
+        abstract.addTo(map);
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OpenStreetMap_0;
+        map.addLayer(layer_OpenStreetMap_0);
+        function pop_KawasanHutandiKabupatenPelalawan_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="Fungsi"colspan="2"><strong>Fungsi Lahan</strong><br />' + (feature.properties['Fungsi'] !== null ? autolinker.link(feature.properties['Fungsi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_KawasanHutandiKabupatenPelalawan_1_0(feature) {
+            switch(String(feature.properties['Fungsi'])) {
+                case 'Areal Penggunaan Lain':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Hutan Lindung':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(76,230,0,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Hutan Produksi':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,115,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Hutan Produksi Konversi':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(245,122,122,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Hutan Produksi Terbatas':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(163,255,115,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Laut - Air':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,197,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Suaka Margasatwa':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(173,63,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Taman Nasional':
+                    return {
+                pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(173,63,255,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_KawasanHutandiKabupatenPelalawan_1');
+        map.getPane('pane_KawasanHutandiKabupatenPelalawan_1').style.zIndex = 401;
+        map.getPane('pane_KawasanHutandiKabupatenPelalawan_1').style['mix-blend-mode'] = 'normal';
+        var layer_KawasanHutandiKabupatenPelalawan_1 = new L.geoJson(json_KawasanHutandiKabupatenPelalawan_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KawasanHutandiKabupatenPelalawan_1',
+            layerName: 'layer_KawasanHutandiKabupatenPelalawan_1',
+            pane: 'pane_KawasanHutandiKabupatenPelalawan_1',
+            onEachFeature: pop_KawasanHutandiKabupatenPelalawan_1,
+            style: style_KawasanHutandiKabupatenPelalawan_1_0,
+        });
+        bounds_group.addLayer(layer_KawasanHutandiKabupatenPelalawan_1);
+        map.addLayer(layer_KawasanHutandiKabupatenPelalawan_1);
+        function pop_BatasAdministrasiKabupatenKota_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="NAMOBJ"colspan="2"><strong>NAMOBJ</strong><br />' + (feature.properties['NAMOBJ'] !== null ? autolinker.link(feature.properties['NAMOBJ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BatasAdministrasiKabupatenKota_2_0() {
+            return {
+                pane: 'pane_BatasAdministrasiKabupatenKota_2',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '4.0,2.0,1.0,2.0,1.0,2.0',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BatasAdministrasiKabupatenKota_2');
+        map.getPane('pane_BatasAdministrasiKabupatenKota_2').style.zIndex = 402;
+        map.getPane('pane_BatasAdministrasiKabupatenKota_2').style['mix-blend-mode'] = 'normal';
+        var layer_BatasAdministrasiKabupatenKota_2 = new L.geoJson(json_BatasAdministrasiKabupatenKota_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BatasAdministrasiKabupatenKota_2',
+            layerName: 'layer_BatasAdministrasiKabupatenKota_2',
+            pane: 'pane_BatasAdministrasiKabupatenKota_2',
+            onEachFeature: pop_BatasAdministrasiKabupatenKota_2,
+            style: style_BatasAdministrasiKabupatenKota_2_0,
+        });
+        bounds_group.addLayer(layer_BatasAdministrasiKabupatenKota_2);
+        map.addLayer(layer_BatasAdministrasiKabupatenKota_2);
+        function pop_BatasAdministrasiDesa_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="NAMOBJ"colspan="2"><strong>Nama Desa</strong><br />' + (feature.properties['NAMOBJ'] !== null ? autolinker.link(feature.properties['NAMOBJ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_BatasAdministrasiDesa_3_0() {
+            return {
+                pane: 'pane_BatasAdministrasiDesa_3',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '1.0,2.0',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_BatasAdministrasiDesa_3');
+        map.getPane('pane_BatasAdministrasiDesa_3').style.zIndex = 403;
+        map.getPane('pane_BatasAdministrasiDesa_3').style['mix-blend-mode'] = 'normal';
+        var layer_BatasAdministrasiDesa_3 = new L.geoJson(json_BatasAdministrasiDesa_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_BatasAdministrasiDesa_3',
+            layerName: 'layer_BatasAdministrasiDesa_3',
+            pane: 'pane_BatasAdministrasiDesa_3',
+            onEachFeature: pop_BatasAdministrasiDesa_3,
+            style: style_BatasAdministrasiDesa_3_0,
+        });
+        bounds_group.addLayer(layer_BatasAdministrasiDesa_3);
+        map.addLayer(layer_BatasAdministrasiDesa_3);
+        function pop_KawasanHidrologisGambutdiKabupatenPelalawan_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="nama_khg"colspan="2"><strong>Nama Kawasan Hidrologis Gambut (KHG)</strong><br />' + (feature.properties['nama_khg'] !== null ? autolinker.link(feature.properties['nama_khg'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_KawasanHidrologisGambutdiKabupatenPelalawan_4_0() {
+            return {
+                pane: 'pane_KawasanHidrologisGambutdiKabupatenPelalawan_4',
+                opacity: 1,
+                color: 'rgba(230,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(230,0,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_KawasanHidrologisGambutdiKabupatenPelalawan_4');
+        map.getPane('pane_KawasanHidrologisGambutdiKabupatenPelalawan_4').style.zIndex = 404;
+        map.getPane('pane_KawasanHidrologisGambutdiKabupatenPelalawan_4').style['mix-blend-mode'] = 'normal';
+        var layer_KawasanHidrologisGambutdiKabupatenPelalawan_4 = new L.geoJson(json_KawasanHidrologisGambutdiKabupatenPelalawan_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KawasanHidrologisGambutdiKabupatenPelalawan_4',
+            layerName: 'layer_KawasanHidrologisGambutdiKabupatenPelalawan_4',
+            pane: 'pane_KawasanHidrologisGambutdiKabupatenPelalawan_4',
+            onEachFeature: pop_KawasanHidrologisGambutdiKabupatenPelalawan_4,
+            style: style_KawasanHidrologisGambutdiKabupatenPelalawan_4_0,
+        });
+        bounds_group.addLayer(layer_KawasanHidrologisGambutdiKabupatenPelalawan_4);
+        map.addLayer(layer_KawasanHidrologisGambutdiKabupatenPelalawan_4);
+        function pop_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td class="visible-with-data" id="Nama"colspan="2"><strong>Nama Pemilik Petak Perkebunan Sawit Rakyat</strong><br />' + (feature.properties['Nama'] !== null ? autolinker.link(feature.properties['Nama'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Luas"colspan="2"><strong>Luas (Ha)</strong><br />' + (feature.properties['Luas'] !== null ? autolinker.link(feature.properties['Luas'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Status"colspan="2"><strong>Status Lahan</strong><br />' + (feature.properties['Status'] !== null ? autolinker.link(feature.properties['Status'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Umur"colspan="2"><strong>Umur Tanaman</strong><br />' + (feature.properties['Umur'] !== null ? autolinker.link(feature.properties['Umur'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5_0(feature) {
+            switch(String(feature.properties['Status'])) {
+                case 'HGU':
+                    return {
+                pane: 'pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(202,0,32,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'NA':
+                    return {
+                pane: 'pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,165,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SHM':
+                    return {
+                pane: 'pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SKGR':
+                    return {
+                pane: 'pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(186,186,186,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SKT':
+                    return {
+                pane: 'pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(64,64,64,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5');
+        map.getPane('pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5').style.zIndex = 405;
+        map.getPane('pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5').style['mix-blend-mode'] = 'normal';
+        var layer_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5 = new L.geoJson(json_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+            layerName: 'layer_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+            pane: 'pane_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5',
+            onEachFeature: pop_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5,
+            style: style_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5_0,
+        });
+        bounds_group.addLayer(layer_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5);
+        map.addLayer(layer_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5);
+        var overlaysTree = [
+            {label: 'Petak Perkebunan Sawit Rakyat di Kabupaten Pelalawan<br /><table><tr><td style="text-align: center;"><img src="legend/PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5_HGU0.png" /></td><td>HGU</td></tr><tr><td style="text-align: center;"><img src="legend/PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5_NA1.png" /></td><td>NA</td></tr><tr><td style="text-align: center;"><img src="legend/PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5_SHM2.png" /></td><td>SHM</td></tr><tr><td style="text-align: center;"><img src="legend/PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5_SKGR3.png" /></td><td>SKGR</td></tr><tr><td style="text-align: center;"><img src="legend/PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5_SKT4.png" /></td><td>SKT</td></tr></table>', layer: layer_PetakPerkebunanSawitRakyatdiKabupatenPelalawan_5},
+            {label: '<img src="legend/KawasanHidrologisGambutdiKabupatenPelalawan_4.png" /> Kawasan Hidrologis Gambut di Kabupaten Pelalawan', layer: layer_KawasanHidrologisGambutdiKabupatenPelalawan_4},
+            {label: '<img src="legend/BatasAdministrasiDesa_3.png" /> Batas Administrasi Desa', layer: layer_BatasAdministrasiDesa_3},
+            {label: '<img src="legend/BatasAdministrasiKabupatenKota_2.png" /> Batas Administrasi Kabupaten/Kota', layer: layer_BatasAdministrasiKabupatenKota_2},
+            {label: 'Kawasan Hutan di Kabupaten Pelalawan<br /><table><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_ArealPenggunaanLain0.png" /></td><td>Areal Penggunaan Lain</td></tr><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_HutanLindung1.png" /></td><td>Hutan Lindung</td></tr><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_HutanProduksi2.png" /></td><td>Hutan Produksi</td></tr><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_HutanProduksiKonversi3.png" /></td><td>Hutan Produksi Konversi</td></tr><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_HutanProduksiTerbatas4.png" /></td><td>Hutan Produksi Terbatas</td></tr><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_LautAir5.png" /></td><td>Laut - Air</td></tr><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_SuakaMargasatwa6.png" /></td><td>Suaka Margasatwa</td></tr><tr><td style="text-align: center;"><img src="legend/KawasanHutandiKabupatenPelalawan_1_TamanNasional7.png" /></td><td>Taman Nasional</td></tr></table>', layer: layer_KawasanHutandiKabupatenPelalawan_1},
+            {label: "OpenStreetMap", layer: layer_OpenStreetMap_0, radioGroup: 'bm' },]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        var i = 0;
+        layer_BatasAdministrasiDesa_3.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAMOBJ'] !== null?String('<div style="color: #323232; font-size: 6pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['NAMOBJ']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_BatasAdministrasiDesa_3'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_BatasAdministrasiDesa_3]);
+        map.on("zoomend", function(){
+            resetLabels([layer_BatasAdministrasiDesa_3]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_BatasAdministrasiDesa_3]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_BatasAdministrasiDesa_3]);
+        });
+        </script>
+    </body>
+</html>
